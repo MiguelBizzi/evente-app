@@ -71,6 +71,12 @@ export default function EventDetailsScreen() {
     }
   };
 
+  const handleViewRegistrationPress = () => {
+    // Placeholder: navegará para tela de detalhes da inscrição no futuro
+    // router.push(`/event/${event?.id}/registration`);
+    console.log('Ver inscrição para o evento:', event?.id);
+  };
+
   const renderStars = (rating: number) => {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   };
@@ -203,11 +209,14 @@ export default function EventDetailsScreen() {
         <View className="mx-4 mb-5 mt-5 gap-2.5">
           {isRegistered ? (
             <>
-              <View className="items-center">
-                <View className="rounded-[20px] bg-[#ece8ff] px-3.5 py-1.5">
-                  <Text className="font-medium text-[#5a35ed]">Inscrito</Text>
-                </View>
-              </View>
+              <TouchableOpacity
+                onPress={handleViewRegistrationPress}
+                className="w-full items-center rounded-md bg-[#9076f3] py-3.5"
+              >
+                <Text className="text-base font-semibold text-white">
+                  Ver Inscrição
+                </Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleRegistrationPress}
                 className="w-full items-center rounded-md border border-[#9076f3] bg-transparent py-3.5"

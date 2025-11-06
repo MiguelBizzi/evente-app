@@ -28,7 +28,7 @@ export default function Header({
       className="flex-row items-center border-b border-[#e0e0e0] bg-white px-5"
       style={{ paddingTop: insets.top + 16, paddingBottom: 16 }}
     >
-      <View>
+      <View className="w-9">
         {showBackButton ? (
           <TouchableOpacity onPress={() => router.back()} className="-ml-2 p-2">
             <ArrowLeft size={20} color="#19191f" />
