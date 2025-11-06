@@ -136,13 +136,53 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         emailRedirectTo: undefined, // Não redireciona para email
       },
     });
+
+    if (error) {
+      return { error, session: null };
+    }
+
     // Se houver sessão, significa que a confirmação está desabilitada e o usuário já está logado
-    if (data.session) {
+    if (data.session && data.user) {
       setSession(data.session);
       setUser(data.user);
-      // Profile will be fetched in useEffect when user changes
+
+      // Create user profile after successful signup
+      try {
+        // Check if profile already exists
+        const { data: existingProfile } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .single();
+
+        if (existingProfile) {
+          // Profile already exists, use it
+          setUserProfile(existingProfile);
+        } else {
+          // Create new profile
+          const { error: profileError, data: profileData } = await supabase
+            .from('user_profiles')
+            .insert({
+              user_id: data.user.id,
+              type: 'participant', // Default type
+            })
+            .select()
+            .single();
+
+          if (profileError) {
+            console.error('Error creating user profile:', profileError);
+            // Don't fail the signup if profile creation fails, but log it
+          } else if (profileData) {
+            // Set the profile directly since we just created it
+            setUserProfile(profileData);
+          }
+        }
+      } catch (profileErr) {
+        console.error('Error creating user profile:', profileErr);
+      }
     }
-    return { error, session: data.session };
+
+    return { error: null, session: data.session };
   };
 
   const signOut = async () => {
