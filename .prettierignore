@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.expo/
+dist/
+build/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files
+.env
+.env.local
+
+# Generated files
+*.generated.*
+.expo-shared/
+
+
