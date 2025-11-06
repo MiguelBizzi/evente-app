@@ -1,15 +1,20 @@
-import '../global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import '../global.css';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import Header from '@/components/Header';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -63,7 +68,10 @@ function RootLayoutNav() {
   useEffect(() => {
     if (loading) return;
 
-    const inAuthGroup = segments[0] === '(tabs)' || segments[0] === 'modal';
+    const inAuthGroup =
+      segments[0] === '(tabs)' ||
+      segments[0] === 'modal' ||
+      segments[0] === 'event';
 
     if (!session && inAuthGroup) {
       // Redirect to login if trying to access protected route
@@ -89,6 +97,12 @@ function RootLayoutNav() {
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="register" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="event/[id]"
+          options={{
+            header: () => <Header title="Detalhes do Evento" showBackButton />,
+          }}
+        />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>

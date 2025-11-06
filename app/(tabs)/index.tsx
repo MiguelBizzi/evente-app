@@ -2,6 +2,7 @@ import CategoryChip from '@/components/CategoryChip';
 import EventCard from '@/components/EventCard';
 import { useEvents } from '@/hooks/useEvents';
 import { EventCategory } from '@/types/events';
+import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -22,6 +23,7 @@ const mainCategories: EventCategory[] = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<
     EventCategory | 'all' | null
   >('all');
@@ -45,8 +47,7 @@ export default function HomeScreen() {
   };
 
   const handleEventPress = (eventId: string) => {
-    // Placeholder: navegará para tela de detalhes no futuro
-    console.log('Event pressed:', eventId);
+    router.push(`/event/${eventId}`);
   };
 
   const handleFavoritePress = async (eventId: string) => {
