@@ -2,7 +2,7 @@ import CategoryChip from '@/components/CategoryChip';
 import EventCard from '@/components/EventCard';
 import { useEvents } from '@/hooks/useEvents';
 import { EventCategory } from '@/types/events';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -26,27 +26,15 @@ export default function HomeScreen() {
     EventCategory | 'all' | null
   >('all');
 
-  const {
-    events,
-    loading,
-    error,
-    getEvents,
-    toggleFavorite,
-    isFavorite,
-  } = useEvents();
+  const { events, loading, error, getEvents, toggleFavorite, isFavorite } =
+    useEvents();
 
-  // Filter events by category
   const filteredEvents = useMemo(() => {
     if (!selectedCategory || selectedCategory === 'all') {
       return events;
     }
     return events.filter((event) => event.category === selectedCategory);
   }, [events, selectedCategory]);
-
-  // Fetch events when category changes
-  useEffect(() => {
-    getEvents(selectedCategory);
-  }, [selectedCategory, getEvents]);
 
   const handleCategoryPress = (category: EventCategory | 'all') => {
     if (selectedCategory === category) {
@@ -118,9 +106,7 @@ export default function HomeScreen() {
                 <TouchableOpacity
                   onPress={() => handleCategoryPress('all')}
                   className={`rounded-full px-3.5 py-1.5 ${
-                    selectedCategory === 'all'
-                      ? 'bg-[#9076f3]'
-                      : 'bg-[#e1dfec]'
+                    selectedCategory === 'all' ? 'bg-[#9076f3]' : 'bg-[#e1dfec]'
                   }`}
                 >
                   <Text

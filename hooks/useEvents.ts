@@ -172,10 +172,11 @@ export function useEvents(): UseEventsReturn {
     await getEvents();
   }, [getEvents]);
 
-  // Initial load
+  // Initial load - only once on mount
   useEffect(() => {
     getEvents();
-  }, [getEvents]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Fetch favorites when user profile changes
   useEffect(() => {

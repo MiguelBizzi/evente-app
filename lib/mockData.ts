@@ -1,5 +1,27 @@
 import { Event, EventCategory } from '@/types/events';
 
+// Keep categoryLabels for UI display
+export const categoryLabels: Record<EventCategory, string> = {
+  music: 'Música',
+  sports: 'Esporte',
+  food: 'Culinária',
+  art: 'Arte',
+  education: 'Educação',
+  technology: 'Tecnologia',
+  health: 'Saúde',
+  wellness: 'Bem-estar',
+  business: 'Negócios',
+  religion: 'Religião',
+  community: 'Comunidade',
+  entertainment: 'Entretenimento',
+  culture: 'Cultura',
+  workshop: 'Oficina',
+  conference: 'Conferência',
+  networking: 'Networking',
+  other: 'Outros',
+};
+
+// Mock events - deprecated, use Supabase instead
 export const mockEvents: Event[] = [
   {
     id: '1',
@@ -128,24 +150,4 @@ export const mockEvents: Event[] = [
     updated_at: new Date().toISOString(),
   },
 ];
-
-export const categoryLabels: Record<EventCategory, string> = {
-  music: 'Música',
-  sports: 'Esporte',
-  food: 'Culinária',
-  art: 'Arte',
-  education: 'Educação',
-  technology: 'Tecnologia',
-  health: 'Saúde',
-  wellness: 'Bem-estar',
-  business: 'Negócios',
-  religion: 'Religião',
-  community: 'Comunidade',
-  entertainment: 'Entretenimento',
-  culture: 'Cultura',
-  workshop: 'Oficina',
-  conference: 'Conferência',
-  networking: 'Networking',
-  other: 'Outros',
-};
 

@@ -32,15 +32,17 @@ export default function EventCard({
     <View className="mb-5 overflow-hidden rounded-xl bg-white shadow-sm">
       {/* Image with overlay */}
       <View className="relative h-40">
-        <Image
-          source={
-            event.image_url
-              ? { uri: event.image_url }
-              : require('@/assets/images/icon.png')
-          }
-          className="h-full w-full"
-          resizeMode="cover"
-        />
+        {event.image_url ? (
+          <Image
+            source={{ uri: event.image_url }}
+            className="h-full w-full"
+            resizeMode="cover"
+          />
+        ) : (
+          <View className="h-full w-full items-center justify-center bg-gray-200">
+            <Text className="text-sm text-gray-500">Sem imagem</Text>
+          </View>
+        )}
         {/* Bottom overlay */}
         <View style={StyleSheet.absoluteFill} className="justify-end">
           <View
