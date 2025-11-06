@@ -19,8 +19,7 @@ export default function Header({
   const insets = useSafeAreaInsets();
 
   const handleAvatarPress = () => {
-    // Placeholder: navegará para tela de perfil no futuro
-    // router.push('/profile');
+    router.push('/profile');
   };
 
   return (

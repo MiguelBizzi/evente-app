@@ -39,6 +39,9 @@ interface UseEventsReturn {
   isRegistered: boolean;
   fetchEvent: (eventId: string) => Promise<void>;
   toggleRegistration: (eventId: string) => Promise<void>;
+  // Registered events methods
+  registeredEvents: Event[];
+  getRegisteredEvents: () => Promise<void>;
 }
 
 export function useEvents(): UseEventsReturn {
@@ -52,6 +55,8 @@ export function useEvents(): UseEventsReturn {
   const [organizer, setOrganizer] = useState<OrganizerInfo | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
+  // Registered events state
+  const [registeredEvents, setRegisteredEvents] = useState<Event[]>([]);
 
   // Fetch user favorites
   const fetchFavorites = useCallback(async () => {
@@ -433,6 +438,85 @@ export function useEvents(): UseEventsReturn {
     [userProfile?.id, fetchEvent]
   );
 
+  // Fetch registered events (future events only)
+  const getRegisteredEvents = useCallback(async () => {
+    if (!userProfile?.id) {
+      setRegisteredEvents([]);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Get current date/time for filtering
+      const now = new Date().toISOString();
+
+      // Fetch registrations for the user
+      const { data: registrationsData, error: registrationsError } =
+        await supabase
+          .from('registrations')
+          .select('event_id')
+          .eq('user_id', userProfile.id)
+          .eq('status', 'confirmed');
+
+      if (registrationsError) {
+        throw registrationsError;
+      }
+
+      if (!registrationsData || registrationsData.length === 0) {
+        setRegisteredEvents([]);
+        setLoading(false);
+        return;
+      }
+
+      const eventIds = registrationsData.map((reg) => reg.event_id);
+
+      // Fetch events that are registered and in the future
+      const { data: eventsData, error: eventsError } = await supabase
+        .from('events')
+        .select('*')
+        .in('id', eventIds)
+        .eq('is_active', true)
+        .gte('event_date', now)
+        .order('event_date', { ascending: true });
+
+      if (eventsError) {
+        throw eventsError;
+      }
+
+      // Map the data to match our Event interface
+      const mappedEvents: Event[] =
+        eventsData?.map((event) => ({
+          id: event.id,
+          title: event.title,
+          description: event.description,
+          event_date: event.event_date,
+          location: event.location,
+          address: event.address,
+          city: event.city,
+          state: event.state,
+          zip_code: event.zip_code,
+          category: event.category as EventCategory,
+          organizer_id: event.organizer_id,
+          capacity: event.capacity,
+          price: parseFloat(event.price) || 0,
+          image_url: event.image_url,
+          is_active: event.is_active,
+          created_at: event.created_at,
+          updated_at: event.updated_at,
+        })) || [];
+
+      setRegisteredEvents(mappedEvents);
+    } catch (err: any) {
+      console.error('Error fetching registered events:', err);
+      setError(err.message || 'Erro ao buscar eventos inscritos');
+      setRegisteredEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [userProfile?.id]);
+
   return {
     events,
     loading,
@@ -449,5 +533,8 @@ export function useEvents(): UseEventsReturn {
     isRegistered,
     fetchEvent,
     toggleRegistration,
+    // Registered events returns
+    registeredEvents,
+    getRegisteredEvents,
   };
 }

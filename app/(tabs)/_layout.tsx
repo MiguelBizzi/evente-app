@@ -1,27 +1,33 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
+import { CalendarDays, History, Home, Search } from 'lucide-react-native';
 import React from 'react';
 
 import Header from '@/components/Header';
-import Colors from '@/constants/Colors';
 import { useClientOnlyValue } from '@/hooks/useClientOnlyValue';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+// Cor primária do app
+const PRIMARY_COLOR = '#9076f3';
+
+function TabBarIcon({
+  Icon,
+  color,
+}: {
+  Icon: React.ComponentType<{ size?: number; color?: string }>;
   color: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <Icon size={24} color={color} />;
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: PRIMARY_COLOR,
+        tabBarInactiveTintColor: '#565d6d',
+        tabBarStyle: {
+          backgroundColor: '#fff',
+          borderTopColor: '#e0e0e0',
+        },
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
@@ -31,16 +37,36 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon Icon={Home} color={color} />,
           header: () => <Header title="Home" />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="buscar"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          header: () => <Header title="Tab Two" />,
+          title: 'Buscar',
+          tabBarIcon: ({ color }) => <TabBarIcon Icon={Search} color={color} />,
+          header: () => <Header title="Buscar" />,
+        }}
+      />
+      <Tabs.Screen
+        name="historico"
+        options={{
+          title: 'Histórico',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon Icon={History} color={color} />
+          ),
+          header: () => <Header title="Histórico" />,
+        }}
+      />
+      <Tabs.Screen
+        name="meus-eventos"
+        options={{
+          title: 'Meus Eventos',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon Icon={CalendarDays} color={color} />
+          ),
+          header: () => <Header title="Meus Eventos" />,
         }}
       />
     </Tabs>

@@ -3,6 +3,7 @@ import EventCard from '@/components/EventCard';
 import { useEvents } from '@/hooks/useEvents';
 import { EventCategory } from '@/types/events';
 import { useRouter } from 'expo-router';
+import { Heart } from 'lucide-react-native';
 import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -27,16 +28,28 @@ export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState<
     EventCategory | 'all' | null
   >('all');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   const { events, loading, error, getEvents, toggleFavorite, isFavorite } =
     useEvents();
 
   const filteredEvents = useMemo(() => {
-    if (!selectedCategory || selectedCategory === 'all') {
-      return events;
+    let filtered = events;
+
+    // Filter by category
+    if (selectedCategory && selectedCategory !== 'all') {
+      filtered = filtered.filter(
+        (event) => event.category === selectedCategory
+      );
     }
-    return events.filter((event) => event.category === selectedCategory);
-  }, [events, selectedCategory]);
+
+    // Filter by favorites if enabled
+    if (showFavoritesOnly) {
+      filtered = filtered.filter((event) => isFavorite(event.id));
+    }
+
+    return filtered;
+  }, [events, selectedCategory, showFavoritesOnly, isFavorite]);
 
   const handleCategoryPress = (category: EventCategory | 'all') => {
     if (selectedCategory === category) {
@@ -96,9 +109,11 @@ export default function HomeScreen() {
 
             {/* Categories Section */}
             <View className="mt-7 px-5">
-              <Text className="mb-3 text-xl font-semibold text-[#19191f]">
-                Categorias em Destaque
-              </Text>
+              <View className="mb-3 flex-row items-center justify-between">
+                <Text className="text-xl font-semibold text-[#19191f]">
+                  Categorias em Destaque
+                </Text>
+              </View>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -132,10 +147,32 @@ export default function HomeScreen() {
             </View>
 
             {/* Events Section Header */}
-            <View className="mb-4 mt-7 px-5">
+            <View className="mb-4 mt-7 flex flex-row items-center justify-between px-5">
               <Text className="text-base font-bold text-[#19191f]">
-                Eventos Recomendados
+                {showFavoritesOnly
+                  ? 'Meus Eventos Favoritos'
+                  : 'Eventos Recomendados'}
               </Text>
+
+              <TouchableOpacity
+                onPress={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                className={`flex-row items-center gap-2 rounded-full px-3.5 py-1.5 ${
+                  showFavoritesOnly ? 'bg-[#9076f3]' : 'bg-[#e1dfec]'
+                }`}
+              >
+                <Heart
+                  size={16}
+                  color={showFavoritesOnly ? '#fff' : '#19191f'}
+                  fill={showFavoritesOnly ? '#fff' : 'none'}
+                />
+                <Text
+                  className={`text-sm ${
+                    showFavoritesOnly ? 'text-white' : 'text-[#19191f]'
+                  }`}
+                >
+                  Favoritos
+                </Text>
+              </TouchableOpacity>
             </View>
           </>
         }
@@ -154,7 +191,9 @@ export default function HomeScreen() {
             <Text className="text-center text-[#565d6d]">
               {loading
                 ? 'Carregando eventos...'
-                : 'Nenhum evento encontrado nesta categoria.'}
+                : showFavoritesOnly
+                  ? 'Você ainda não favoritou nenhum evento.'
+                  : 'Nenhum evento encontrado nesta categoria.'}
             </Text>
           </View>
         }

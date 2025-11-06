@@ -71,7 +71,8 @@ function RootLayoutNav() {
     const inAuthGroup =
       segments[0] === '(tabs)' ||
       segments[0] === 'modal' ||
-      segments[0] === 'event';
+      segments[0] === 'event' ||
+      segments[0] === 'profile';
 
     if (!session && inAuthGroup) {
       // Redirect to login if trying to access protected route
@@ -101,6 +102,12 @@ function RootLayoutNav() {
           name="event/[id]"
           options={{
             header: () => <Header title="Detalhes do Evento" showBackButton />,
+          }}
+        />
+        <Stack.Screen
+          name="profile"
+          options={{
+            headerShown: false,
           }}
         />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
