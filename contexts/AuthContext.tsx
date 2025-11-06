@@ -146,9 +146,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(data.session);
       setUser(data.user);
 
-      // Create user profile after successful signup
       try {
-        // Check if profile already exists
         const { data: existingProfile } = await supabase
           .from('user_profiles')
           .select('*')
@@ -156,24 +154,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .single();
 
         if (existingProfile) {
-          // Profile already exists, use it
           setUserProfile(existingProfile);
         } else {
-          // Create new profile
           const { error: profileError, data: profileData } = await supabase
             .from('user_profiles')
             .insert({
               user_id: data.user.id,
-              type: 'participant', // Default type
+              type: 'participant',
             })
             .select()
             .single();
 
           if (profileError) {
             console.error('Error creating user profile:', profileError);
-            // Don't fail the signup if profile creation fails, but log it
           } else if (profileData) {
-            // Set the profile directly since we just created it
             setUserProfile(profileData);
           }
         }
